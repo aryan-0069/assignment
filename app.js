@@ -1,6 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mysql from "mysql2/promise";
+import env from "dotenv";
+
 
 const app = express();
 const port = 3000;
@@ -8,17 +10,17 @@ const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// ✅ MySQL Database Connection
+// MySQL 
 const db = await mysql.createConnection({
-  host: "localhost",
-  user: "root",           
-  database: "project1",
-  password: "yourpassword",
-  port: 3306,
+  host: process.env.HOST,
+  user: process.env.USER,           
+  database: process.env.DATABASE,
+  password: process.env.PASSWORD,
+  port: process.env.PORT,
 });
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371;
+  const R = 6371; // radius of earth
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
   const a =
@@ -29,7 +31,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return Math.round(R * c * 100) / 100;
 }
 
-// 🟢 GET /listSchools
+//  GET /listSchools
 app.get("/listSchools", async (req, res) => {
   const { latitude, longitude } = req.query;
 
@@ -54,7 +56,7 @@ app.get("/listSchools", async (req, res) => {
   }
 });
 
-// 🟢 POST /addSchool
+//  POST /addSchool
 app.post("/addSchool", async (req, res) => {
   const { name, address, latitude, longitude } = req.body;
 
@@ -70,7 +72,7 @@ app.post("/addSchool", async (req, res) => {
 
     res.status(201).json({
       message: "School added successfully!",
-      schoolId: result.insertId  // 🟢 MySQL gives the new ID like this
+      schoolId: result.insertId  
     });
   } catch (err) {
     console.error(err);
