@@ -16,7 +16,7 @@ const db = await mysql.createConnection({
   user: process.env.USER,           
   database: process.env.DATABASE,
   password: process.env.PASSWORD,
-  port: process.env.PORT,
+  port: process.env.DB_PORT,
 });
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
